@@ -18,32 +18,41 @@ var init = function () {
 };
 
 function makeDraggable(element) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  var elX1, elX2, elY1, elY2;
+  var mouseX1, mouseX2, mouseY1, mouseY2;
 
   element.onmousedown = dragMouseDown;
 
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    // Get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+
+    mouseX1 = e.clientX;
+    mouseY1 = e.clientY;
+
+    var computedStyle = getComputedStyle(element);
+    elX1 = computedStyle.right.split('px')[0];
+    elY1 = computedStyle.bottom.split('px')[0];
+
     document.onmouseup = closeDragElement;
-    // Call a function whenever the cursor moves:
     document.onmousemove = elementDrag;
   }
 
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    // Calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // Set the element's new position:
-    element.style.top = (element.offsetTop - pos2) + "px";
-    element.style.left = (element.offsetLeft - pos1) + "px";
+
+    mouseX2 = e.clientX;
+    mouseY2 = e.clientY;
+
+    mouseXDiff = mouseX1 - mouseX2;
+    mouseYDiff = mouseY1 - mouseY2;
+
+    elX2 = parseInt(elX1) + mouseXDiff;
+    elY2 = parseInt(elY1) + mouseYDiff;
+
+    element.style.right = elX2 + 'px';
+    element.style.bottom = elY2 + 'px';
   }
 
   function closeDragElement() {
