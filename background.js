@@ -5,42 +5,39 @@ var SITE_TO_TIME_MAP = {}
 var focused = true; // -1 if the window is not on focus.
 
 /**
- * Run every 5 seconds and increment time spent on a website.
+ * Run every 1 seconds and increment time spent on a website.
  */
-setInterval(function() {
-  var filters = {active: true, currentWindow: true};
+setInterval(function () {
+  var filters = { active: true, currentWindow: true };
 
   // Get active tabs.
   chrome.tabs.query(filters, function (tabs) {
 
     // If no tabs are active don't do anything.
-    if(!tabs || !tabs.length || !focused) return; 
+    if (!tabs || !tabs.length || !focused) return;
 
     // Get the site name from the tab url and initialize and increment the time.
     var site = getSiteName(tabs[0].url);
     if (!(site in SITE_TO_TIME_MAP)) {
       SITE_TO_TIME_MAP[site] = 0;
     }
-    SITE_TO_TIME_MAP[site] += 5;
+    SITE_TO_TIME_MAP[site] += 1;
 
-    // Notify the user every 10 seconds.
-    if (SITE_TO_TIME_MAP[site] % 10 === 0) {
-      var data = {site: site, time: SITE_TO_TIME_MAP[site]};
-      chrome.tabs.sendMessage(tabs[0].id, data, null);
+    var data = { site: site, time: SITE_TO_TIME_MAP[site] };
+    chrome.tabs.sendMessage(tabs[0].id, data, null);
 
-      var opt = {
-        type: "basic",
-        title: "Time Spent",
-        message: "You spent a total of: " + data.time + " seconds on " + data.site,
-        iconUrl: "icon.png"
-      }
-
-      chrome.notifications.create('spent-on-' + site, opt, function() {
-        console.log('notification created');
-      });
+    var opt = {
+      type: "basic",
+      title: "Time Spent",
+      message: "You spent a total of: " + data.time + " seconds on " + data.site,
+      iconUrl: "icon.png"
     }
+
+    chrome.notifications.create('spent-on-' + site, opt, function () {
+      console.log('notification created');
+    });
   });
-}, 5000);
+}, 1000);
 
 
 /**
