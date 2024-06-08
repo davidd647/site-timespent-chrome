@@ -1,7 +1,7 @@
 #time-counter-notification {
   position: fixed;
-  top: 30px;
-  left: 10px;
+  bottom: 30px;
+  right: 10px;
   background: #00000088;
   padding: 10px;
   text-align: center;
