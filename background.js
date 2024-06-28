@@ -3,12 +3,32 @@
  */
 var SITE_TO_TIME_MAP = {}
 var focused = true; // -1 if the window is not on focus.
+var currentDate = new Date().toDateString();
+
+// NOTE:
+// I think localStorage breaks the extension here
+// so I :
+
+// // Initialize date from localStorage
+// if (localStorage.getItem('currentDate')) {
+//   currentDate = localStorage.getItem('currentDate');
+// } else {
+//   localStorage.setItem('currentDate', currentDate);
+// }
 
 /**
  * Run every 1 seconds and increment time spent on a website.
  */
 setInterval(function () {
   var filters = { active: true, currentWindow: true };
+
+  // Check if the day has changed
+  var newDate = new Date().toDateString();
+  if (newDate !== currentDate) {
+    SITE_TO_TIME_MAP = {}; // Reset time map
+    currentDate = newDate;
+    localStorage.setItem('currentDate', currentDate);
+  }
 
   // Get active tabs.
   chrome.tabs.query(filters, function (tabs) {
